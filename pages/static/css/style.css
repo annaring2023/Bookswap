@@ -20,21 +20,19 @@ body {
     width: 900px;
     height: 550px;
     background-image: url('image.png');
-    background-size: cover;    /* Розтягує картинку, щоб заповнити весь блок */
-    background-position: center; /* Центрує фокус */
+    background-size: cover;
+    background-position: center;
     background-repeat: no-repeat;
-    /* background: rgba(255, 255, 255, 0.1); */
     backdrop-filter: blur(10px);
     border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 15px 35px rgba(0,0,0,0.1);
 }
 
-/* Ліва частина */
 .info-section {
 
     flex: 1;
-    padding-bottom: 80px; /* чим більше значення, тим вище підніметься текст */
+    padding-bottom: 80px;
     padding: 40px;
     flex-direction: column;
     justify-content: center;
@@ -76,8 +74,6 @@ h1 {
 }
 
 
-
-/* Права частина */
 .form-section {
 
     flex: 1;
