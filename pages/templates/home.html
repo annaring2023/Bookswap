@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookSwap - Create Account</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="main-container">
+        <div class="info-section">
+            <div class="logo">
+                <span class="icon">💜</span> BookSwap
+            </div>
+            <h1>Exchange books easily and effortlessly</h1>
+            <ul class="features">
+                <li><span>✔</span> Discover new books</li>
+                <li><span>✔</span> Save money and free up shelf space</li>
+                <li><span>✔</span> Read more while spending less</li>
+            </ul>
+        </div>
+
+        <div class="form-section">
+            <div class="form-card">
+                <div class="toggle-buttons">
+                    <button class="btn-log">Log in</button>
+                    <button class="btn-create active">Create accounnt</button>
+                </div>
+
+                <h2>BookSwap</h2>
+
+                <form>
+                    <input type="text" placeholder="Username">
+                    <input type="email" placeholder="Email">
+                    <div class="password-field">
+                        <input type="password" placeholder="Password">
+                    </div>
+                    <div class="password-field">
+                        <input type="password" placeholder="Confirm password">
+                    </div>
+
+                    <button type="submit" class="submit-btn">Create account</button>
+                </form>
+
+                <p class="footer-text">Already have an account? <a href="#">Log in</a></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

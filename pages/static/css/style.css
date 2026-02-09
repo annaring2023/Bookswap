@@ -1,0 +1,157 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    height: 100vh;
+    background: linear-gradient(135deg, #c3a6f1 0%, #f9d1d1 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+.main-container {
+
+    display: flex;
+    width: 900px;
+    height: 550px;
+    background-image: url('image.png');
+    background-size: cover;    /* Розтягує картинку, щоб заповнити весь блок */
+    background-position: center; /* Центрує фокус */
+    background-repeat: no-repeat;
+    /* background: rgba(255, 255, 255, 0.1); */
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+}
+
+/* Ліва частина */
+.info-section {
+
+    flex: 1;
+    padding-bottom: 80px; /* чим більше значення, тим вище підніметься текст */
+    padding: 40px;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.logo {
+    font-size: 33px;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
+h1 {
+    font-size: 28px;
+    line-height: 1.2;
+    margin-bottom: 20px;
+}
+
+.features {
+    list-style: none;
+}
+
+.features li {
+    margin-bottom: 10px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+}
+
+.features li span {
+    margin-right: 10px;
+    border: 1px solid white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 10px;
+}
+
+
+
+/* Права частина */
+.form-section {
+
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.form-card {
+    background: white;
+    width: 100%;
+    max-width: 320px;
+    padding: 30px 20px;
+    border-radius: 25px;
+    text-align: center;
+    color: #333;
+}
+
+.toggle-buttons {
+    background: #f0f0f0;
+    border-radius: 20px;
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.toggle-buttons button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-create.active {
+    background: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    font-weight: bold;
+}
+
+.btn-log { background: transparent; color: #888; }
+
+.form-card h2 {
+    color: #a6a6a6;
+    margin-bottom: 20px;
+}
+
+input {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    border: 1px solid #eee;
+    border-radius: 20px;
+    background: #f9f9f9;
+    outline: none;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 12px;
+    background: #f3ada8;
+    border: none;
+    border-radius: 20px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.footer-text {
+    font-size: 12px;
+    margin-top: 15px;
+    color: #888;
+}
+
+.footer-text a { color: #a6a6a6; text-decoration: none; }
