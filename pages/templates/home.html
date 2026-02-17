@@ -9,44 +9,105 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="main-container">
-        <div class="info-section">
-            <div class="logo">
-                <span class="icon">💜</span> BookSwap
-            </div>
-            <h1>Exchange books easily and effortlessly</h1>
-            <ul class="features">
-                <li><span>✔</span> Discover new books</li>
-                <li><span>✔</span> Save money and free up shelf space</li>
-                <li><span>✔</span> Read more while spending less</li>
-            </ul>
-        </div>
+    <header class="site-header">
+        <div class="logo-main">💜 BookSwap</div>
+        <nav>
+            <a href="#">Каталог</a>
+            <a href="#">Про нас</a>
+            <button class="auth-trigger" id="openAuth">Увійти</button>
+        </nav>
+    </header>
 
-        <div class="form-section">
-            <div class="form-card">
-                <div class="toggle-buttons">
-                    <button class="btn-log">Log in</button>
-                    <button class="btn-create active">Create accounnt</button>
+    <main class="hero-section">
+        <h1>Знайдіть свою наступну улюблену книгу</h1>
+        <p>Дайте книгам друге життя</p>
+        <button class="cta-button" onclick="openSignup()">Почати обмін</button>
+    </main>
+
+    <div class="overlay" id="authModal">
+        <div class="main-container">
+            <button class="close-modal" id="closeAuth">&times;</button>
+
+            <div class="info-section">
+                <div class="logo">
+                    <span class="icon">💜</span> BookSwap
+                </div>
+                <h1>Обмінюйтеся книгами просто та з задоволенням.</h1>
+                <ul class="features">
+                    <li><span>✔</span> Поринай у нові світи щодня</li>
+                    <li><span>✔</span> Заощаджуй кошти та звільняй місце для нових скарбів</li>
+                    <li><span>✔</span> Читай більше, витрачай менше</li>
+                </ul>
+            </div>
+
+            <div class="form-section">
+                <div class="form-card" id="signupCard">
+                    <div class="toggle-buttons">
+                        <button class="btn-toggle" onclick="showLogin()">Увійти</button>
+                        <button class="btn-toggle active">Створити акаунт</button>
+                    </div>
+                    <h2>BookSwap</h2>
+                    <form>
+                        <input type="text" placeholder="Ім'я користувача">
+                        <input type="email" placeholder="Електронна пошта">
+                        <input type="password" placeholder="Пароль">
+                        <button type="submit" class="submit-btn">Створити акаунт</button>
+                    </form>
+                    <p class="footer-text">Вже маєте акаунт? <a href="#" onclick="showLogin()">Увійти</a></p>
                 </div>
 
-                <h2>BookSwap</h2>
-
-                <form>
-                    <input type="text" placeholder="Username">
-                    <input type="email" placeholder="Email">
-                    <div class="password-field">
-                        <input type="password" placeholder="Password">
+                <div class="form-card" id="loginCard" style="display: none;">
+                    <div class="toggle-buttons">
+                        <button class="btn-toggle active">Увійти</button>
+                        <button class="btn-toggle" onclick="showSignup()">Створити акаунт</button>
                     </div>
-                    <div class="password-field">
-                        <input type="password" placeholder="Confirm password">
-                    </div>
-
-                    <button type="submit" class="submit-btn">Create account</button>
-                </form>
-
-                <p class="footer-text">Already have an account? <a href="#">Log in</a></p>
+                    <h2>BookSwap</h2>
+                    <form>
+                        <input type="text" placeholder="Ім'я користувача/пароль">
+                        <input type="password" placeholder="Пароль">
+                        <a href="#" class="forgot-pass">Забули пароль?</a>
+                        <button type="submit" class="submit-btn">Почати обмін</button>
+                    </form>
+                    <p class="footer-text">Не маєте акаунту? <a href="#" onclick="showSignup()">Зареєструватись</a></p>
+                </div>
             </div>
         </div>
     </div>
+
+    <script>
+        const modal = document.getElementById('authModal');
+        const signupCard = document.getElementById('signupCard');
+        const loginCard = document.getElementById('loginCard');
+
+        document.getElementById('openAuth').onclick = () => {
+            modal.classList.add('active');
+            showLogin();
+        };
+
+        function openSignup() {
+            modal.classList.add('active');
+            showSignup();
+        }
+
+        document.getElementById('closeAuth').onclick = () => {
+            modal.classList.remove('active');
+        };
+
+        window.onclick = (event) => {
+            if (event.target == modal) {
+                modal.classList.remove('active');
+            }
+        };
+
+        function showLogin() {
+            signupCard.style.display = 'none';
+            loginCard.style.display = 'block';
+        }
+
+        function showSignup() {
+            loginCard.style.display = 'none';
+            signupCard.style.display = 'block';
+        }
+    </script>
 </body>
 </html>
