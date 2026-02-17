@@ -9,3 +9,5 @@ def home_page_view(request):
         "items": ["Елемент 1", "Елемент 2", "Елемент 3"]
     }
     return render(request, 'home.html', context)
+def profile_view(request):
+    return render(request, 'profile.html')

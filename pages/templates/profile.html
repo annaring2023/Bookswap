@@ -1,0 +1,141 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>BookSwap - Профіль</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Стилі для профілю (тимчасово тут, потім перенесете в CSS) */
+        body {
+            background: linear-gradient(135deg, #a8c0ff 0%, #d5b8ff 100%);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        .header-search {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            margin-bottom: 20px;
+        }
+        .header-search h1 { margin: 0; color: #fff; -webkit-text-stroke: 1px #8a2be2; font-size: 28px; }
+        .search-bar { width: 60%; background: #f0f0f0; border: none; padding: 10px; border-radius: 20px; }
+
+        .container {
+            display: flex;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Ліва колонка */
+        .left-column { width: 30%; display: flex; flex-direction: column; gap: 15px; }
+        .profile-card, .info-card, .genre-card, .save-btn {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .avatar { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; background: #ddd; margin: 0 auto; }
+        .rating { color: #f1c40f; font-size: 20px; margin-top: 10px; }
+
+        .info-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
+        .info-label { font-weight: bold; }
+
+        .save-btn { background: #eab8b8; color: black; font-weight: bold; cursor: pointer; border: none; }
+
+        /* Права колонка */
+        .right-column { width: 65%; display: flex; flex-direction: column; gap: 20px; }
+        .book-post {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .post-header { display: flex; justify-content: space-between; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
+        .book-img { width: 100%; height: 200px; object-fit: cover; border-radius: 10px; background: #eee; }
+
+        /* Меню справа */
+        .side-menu {
+            position: fixed; right: 20px; top: 100px;
+            background: white; padding: 10px; border-radius: 30px;
+            display: flex; flex-direction: column; gap: 15px;
+        }
+        .menu-icon { width: 40px; height: 40px; background: #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="header-search">
+        <h1 style="color: #8a2be2;">BookSwap</h1>
+        <input type="text" class="search-bar" placeholder="🔍 Пошук...">
+    </div>
+
+    <div class="container">
+        <div class="left-column">
+            <div class="profile-card">
+                <div class="avatar">
+                     <img src="https://via.placeholder.com/100" style="border-radius: 50%;">
+                </div>
+                <h3>Ваше Ім'я</h3>
+                <div class="rating">Rating: ★ ★ ★ ★ ☆</div>
+            </div>
+
+            <div class="info-card">
+                <div class="info-row"><span class="info-label">Вік:</span> <span>25</span></div>
+                <div class="info-row"><span class="info-label">Стать:</span> <span>Жіноча</span></div>
+                <div class="info-row"><span class="info-label">Країна:</span> <span>Україна</span></div>
+                <div class="info-row"><span class="info-label">Місто:</span> <span>Київ</span></div>
+            </div>
+
+            <div class="genre-card">
+                <h4>Улюблені жанри:</h4>
+                <p>Фентезі, Детективи, Романи...</p>
+            </div>
+
+            <button class="save-btn">Save changes</button>
+        </div>
+
+        <div class="right-column">
+            <div class="book-post">
+                <div class="post-header">
+                    <span>user123</span>
+                    <span>...</span>
+                </div>
+                <div>
+                    <h3>Тисяча доріг</h3>
+                    <img src="https://via.placeholder.com/400x200" class="book-img">
+                </div>
+            </div>
+
+            <div class="book-post">
+                <div class="post-header">
+                    <span>book_lover</span>
+                    <span>...</span>
+                </div>
+                <div>
+                    <h3>Спогади про нього</h3>
+                    <img src="https://via.placeholder.com/400x200" class="book-img">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="side-menu">
+        <div class="menu-icon">👤</div>
+        <div class="menu-icon">➕</div>
+        <div class="menu-icon">💬</div>
+        <div class="menu-icon">✉️</div>
+    </div>
+
+</body>
+</html>

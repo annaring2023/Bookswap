@@ -14,14 +14,14 @@
         <nav>
             <a href="#">Каталог</a>
             <a href="#">Про нас</a>
-            <button class="auth-trigger" id="openAuth">Увійти</button>
+            <a href="{% url 'profile' %}" class="auth-trigger" style="text-decoration: none; display: inline-block; text-align: center;">Увійти</a>
         </nav>
     </header>
 
     <main class="hero-section">
         <h1>Знайдіть свою наступну улюблену книгу</h1>
         <p>Дайте книгам друге життя</p>
-        <button class="cta-button" onclick="openSignup()">Почати обмін</button>
+        <a href="{% url 'profile' %}" class="cta-button" style="text-decoration: none; display: inline-block; text-align: center;">Почати обмін</a>
     </main>
 
     <div class="overlay" id="authModal">
