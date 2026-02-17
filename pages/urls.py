@@ -1,7 +1,9 @@
 from django.urls import path
-from .views import home_page_view, profile_view  # <-- Ми додали сюди profile_view
+from . import views
 
 urlpatterns = [
-    path('', home_page_view, name='home'),
-    path('profile/', profile_view, name='profile'), # <-- А сюди додали нову адресу
+    path('', views.home, name='home'),
+    path('profile/', views.profile, name='profile'),
+    path('register/', views.register_user, name='register'), # Адреса для реєстрації
+    path('login/', views.login_user, name='login_user'),     # Адреса для входу
 ]

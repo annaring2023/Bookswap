@@ -4,9 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BookSwap - Create Account</title>
+    <title>BookSwap - Головна</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Додатковий стиль, щоб вікно виглядало гарно */
+        body { margin: 0; font-family: 'Inter', sans-serif; }
+        a { text-decoration: none; }
+    </style>
 </head>
 <body>
     <header class="site-header">
@@ -14,14 +19,14 @@
         <nav>
             <a href="#">Каталог</a>
             <a href="#">Про нас</a>
-            <a href="{% url 'profile' %}" class="auth-trigger" style="text-decoration: none; display: inline-block; text-align: center;">Увійти</a>
+            <button class="auth-trigger" id="openAuth">Увійти</button>
         </nav>
     </header>
 
     <main class="hero-section">
         <h1>Знайдіть свою наступну улюблену книгу</h1>
         <p>Дайте книгам друге життя</p>
-        <a href="{% url 'profile' %}" class="cta-button" style="text-decoration: none; display: inline-block; text-align: center;">Почати обмін</a>
+        <button class="cta-button" onclick="openSignup()">Почати обмін</button>
     </main>
 
     <div class="overlay" id="authModal">
@@ -29,43 +34,69 @@
             <button class="close-modal" id="closeAuth">&times;</button>
 
             <div class="info-section">
-                <div class="logo">
-                    <span class="icon">💜</span> BookSwap
-                </div>
+                <div class="logo">💜 BookSwap</div>
                 <h1>Обмінюйтеся книгами просто та з задоволенням.</h1>
                 <ul class="features">
                     <li><span>✔</span> Поринай у нові світи щодня</li>
-                    <li><span>✔</span> Заощаджуй кошти та звільняй місце для нових скарбів</li>
+                    <li><span>✔</span> Заощаджуй кошти</li>
                     <li><span>✔</span> Читай більше, витрачай менше</li>
                 </ul>
             </div>
 
             <div class="form-section">
+
+                {% if messages %}
+                    {% for message in messages %}
+                        <div style="background: #ffcccc; color: #cc0000; padding: 10px; border-radius: 5px; margin-bottom: 10px; text-align: center;">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
                 <div class="form-card" id="signupCard">
                     <div class="toggle-buttons">
-                        <button class="btn-toggle" onclick="showLogin()">Увійти</button>
-                        <button class="btn-toggle active">Створити акаунт</button>
+                        <button class="btn-toggle" type="button" onclick="showLogin()">Увійти</button>
+                        <button class="btn-toggle active" type="button">Створити акаунт</button>
                     </div>
-                    <h2>BookSwap</h2>
-                    <form>
-                        <input type="text" placeholder="Ім'я користувача">
-                        <input type="email" placeholder="Електронна пошта">
-                        <input type="password" placeholder="Пароль">
+                    <h2>Створити акаунт</h2>
+
+                    <form action="{% url 'register' %}" method="POST">
+                        {% csrf_token %}
+                        <input type="text" name="username" placeholder="Ім'я користувача" required>
+                        <input type="email" name="email" placeholder="Електронна пошта" required>
+                        <input type="password" name="password" placeholder="Пароль" required>
                         <button type="submit" class="submit-btn">Створити акаунт</button>
                     </form>
+
                     <p class="footer-text">Вже маєте акаунт? <a href="#" onclick="showLogin()">Увійти</a></p>
                 </div>
+
+                <div class="form-card" id="loginCard" style="display: none;">
+                    <div class="toggle-buttons">
+                        <button class="btn-toggle active" type="button">Увійти</button>
+                        <button class="btn-toggle" type="button" onclick="showSignup()">Створити акаунт</button>
+                    </div>
+                    <h2>З поверненням!</h2>
+
+                    <form action="{% url 'login_user' %}" method="POST">
+                        {% csrf_token %}
+                        <input type="text" name="username" placeholder="Ім'я користувача" required>
+                        <input type="password" name="password" placeholder="Пароль" required>
+                        <button type="submit" class="submit-btn">Почати обмін</button>
+                    </form>
+
+                    <p class="footer-text">Не маєте акаунту? <a href="#" onclick="showSignup()">Зареєструватись</a></p>
+                </div>
+            </div>
 
                 <div class="form-card" id="loginCard" style="display: none;">
                     <div class="toggle-buttons">
                         <button class="btn-toggle active">Увійти</button>
                         <button class="btn-toggle" onclick="showSignup()">Створити акаунт</button>
                     </div>
-                    <h2>BookSwap</h2>
-                    <form>
-                        <input type="text" placeholder="Ім'я користувача/пароль">
-                        <input type="password" placeholder="Пароль">
-                        <a href="#" class="forgot-pass">Забули пароль?</a>
+                    <h2>З поверненням!</h2>
+                    <form action="{% url 'profile' %}"> <input type="text" placeholder="Ім'я користувача" required>
+                        <input type="password" placeholder="Пароль" required>
                         <button type="submit" class="submit-btn">Почати обмін</button>
                     </form>
                     <p class="footer-text">Не маєте акаунту? <a href="#" onclick="showSignup()">Зареєструватись</a></p>
@@ -79,6 +110,7 @@
         const signupCard = document.getElementById('signupCard');
         const loginCard = document.getElementById('loginCard');
 
+        // Відкриття вікна
         document.getElementById('openAuth').onclick = () => {
             modal.classList.add('active');
             showLogin();
@@ -89,21 +121,15 @@
             showSignup();
         }
 
-        document.getElementById('closeAuth').onclick = () => {
-            modal.classList.remove('active');
-        };
+        // Закриття
+        document.getElementById('closeAuth').onclick = () => modal.classList.remove('active');
+        window.onclick = (e) => { if (e.target == modal) modal.classList.remove('active'); };
 
-        window.onclick = (event) => {
-            if (event.target == modal) {
-                modal.classList.remove('active');
-            }
-        };
-
+        // Перемикання вкладок
         function showLogin() {
             signupCard.style.display = 'none';
             loginCard.style.display = 'block';
         }
-
         function showSignup() {
             loginCard.style.display = 'none';
             signupCard.style.display = 'block';
