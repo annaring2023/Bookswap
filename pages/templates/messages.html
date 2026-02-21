@@ -140,26 +140,6 @@
             cursor: pointer;
         }
 
-        .chat-head {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 8px;
-        }
-        .chat-head img,
-        .chat-head-fallback {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            background: #ececec;
-            display: grid;
-            place-items: center;
-            color: #7b6f93;
-            font-weight: 700;
-            flex-shrink: 0;
-        }
-
         /* ===== Report button + modal ===== */
         .chat-head-row {
             display: flex;
@@ -172,6 +152,19 @@
             align-items: center;
             gap: 10px;
             min-width: 0;
+        }
+
+        .chat-head-fallback {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #ececec;
+            display: grid;
+            place-items: center;
+            color: #7b6f93;
+            font-weight: 700;
+            flex-shrink: 0;
         }
 
         .report-btn {
@@ -317,7 +310,6 @@
             <section class="panel">
                 {% if selected %}
 
-                    <!-- Header row: avatar + chat title + report button -->
                     <div class="chat-head-row">
                         <div class="chat-head-left">
                             {% if selected_peer_avatar %}
@@ -340,8 +332,14 @@
                         {% for m in selected_messages %}
                             <div class="msg {% if m.sender_id == request.user.id %}me{% endif %}">
                                 <div>{{ m.text }}</div>
-                                <!-- time is already here -->
-                                <div class="meta">{{ m.created_at|date:"d.m H:i" }}</div>
+
+                                <!-- ✅ Time + (for my messages) read status -->
+                                <div class="meta">
+                                    {{ m.created_at|date:"d.m H:i" }}
+                                    {% if m.sender_id == request.user.id %}
+                                        • {% if m.is_read %}прочитано{% else %}непрочитано{% endif %}
+                                    {% endif %}
+                                </div>
                             </div>
                         {% empty %}
                             <p>Почніть переписку.</p>
@@ -403,7 +401,6 @@
         if (closeReportBtn) closeReportBtn.addEventListener('click', closeReport);
         if (closeReportX) closeReportX.addEventListener('click', closeReport);
 
-        // close by clicking on dark background
         if (reportOverlay) {
             reportOverlay.addEventListener('click', (e) => {
                 if (e.target === reportOverlay) closeReport();

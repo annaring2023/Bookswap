@@ -454,7 +454,9 @@ def report_user(request, conversation_id):
         return JsonResponse({'ok': False, 'error': 'Empty reason'}, status=400)
 
     conversation = get_object_or_404(Conversation, id=conversation_id)
-    other_user = next(u for u in conversation.participants.all() if u != request.user)
+    other_user = conversation.participants.exclude(id=request.user.id).first()
+    if not other_user:
+        return JsonResponse({'ok': False, 'error': 'No other user'}, status=400)
 
     Report.objects.create(
         reporter=request.user,
