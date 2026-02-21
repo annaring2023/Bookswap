@@ -19,4 +19,5 @@ urlpatterns = [
     path('listings/create/', views.create_listing, name='create_listing'),
     path('listings/<int:listing_id>/edit/', views.edit_listing, name='edit_listing'),
     path('listings/<int:listing_id>/delete/', views.delete_listing, name='delete_listing'),
+    path('report/<int:conversation_id>/', views.report_user, name='report_user'),
 ]

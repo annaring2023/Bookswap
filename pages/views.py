@@ -4,6 +4,9 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
+from django.views.decorators.http import require_POST
+from django.http import JsonResponse
+from .models import Report
 from .models import Listing, UserProfile, Conversation, Message
 
 FAVORITE_GENRE_CHOICES = [
@@ -440,3 +443,24 @@ def logout_user(request):
         logout(request)
         return redirect('home')
     return redirect('settings')
+
+@require_POST
+def report_user(request, conversation_id):
+    if not request.user.is_authenticated:
+        return JsonResponse({'ok': False, 'error': 'Not authenticated'}, status=401)
+
+    reason = request.POST.get('reason', '').strip()
+    if not reason:
+        return JsonResponse({'ok': False, 'error': 'Empty reason'}, status=400)
+
+    conversation = get_object_or_404(Conversation, id=conversation_id)
+    other_user = next(u for u in conversation.participants.all() if u != request.user)
+
+    Report.objects.create(
+        reporter=request.user,
+        reported_user=other_user,
+        conversation=conversation,
+        reason=reason,
+    )
+
+    return JsonResponse({'ok': True})
