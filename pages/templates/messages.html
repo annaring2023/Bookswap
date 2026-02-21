@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Повідомлення - BookSwap</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(120deg, #d8b4d7 0%, #b893e8 100%);
+            color: #3b3444;
+        }
+        .page { padding: 16px; }
+        .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .top a {
+            text-decoration: none;
+            color: #fff;
+            font-size: 2rem;
+            font-weight: 800;
+        }
+        .layout {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 12px;
+        }
+        .panel {
+            background: rgba(255, 255, 255, 0.82);
+            border-radius: 16px;
+            padding: 12px;
+            overflow: auto;
+        }
+        .thread {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            text-decoration: none;
+            color: inherit;
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: #fff;
+        }
+        .thread-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #ececec;
+            flex-shrink: 0;
+        }
+        .thread-avatar-fallback {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: #ececec;
+            color: #7b6f93;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .thread-main { min-width: 0; }
+        .thread-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            align-items: center;
+        }
+        .unread-dot {
+            min-width: 22px;
+            height: 22px;
+            border-radius: 999px;
+            padding: 0 7px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #ef889b;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .thread.active { border: 2px solid #b196d8; }
+        .thread h4 { margin: 0 0 4px; }
+        .thread p { margin: 0; color: #666; font-size: .9rem; }
+        .messages {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 56vh;
+            overflow: auto;
+            padding-right: 4px;
+        }
+        .msg {
+            max-width: 70%;
+            padding: 10px 12px;
+            border-radius: 12px;
+            background: #fff;
+        }
+        .msg.me {
+            align-self: flex-end;
+            background: #efb8b1;
+            color: #fff;
+        }
+        .msg .meta {
+            font-size: .75rem;
+            color: #777;
+            margin-top: 6px;
+        }
+        .msg.me .meta { color: #ffe8ec; }
+        .composer {
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+        }
+        .composer input {
+            flex: 1;
+            border: 1px solid #d5d5d5;
+            border-radius: 999px;
+            padding: 10px 14px;
+            font-size: 14px;
+        }
+        .composer button {
+            border: none;
+            border-radius: 999px;
+            padding: 10px 14px;
+            background: #e7a6b0;
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .chat-head {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .chat-head img,
+        .chat-head-fallback {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #ececec;
+            display: grid;
+            place-items: center;
+            color: #7b6f93;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        @media (max-width: 900px) {
+            .layout { grid-template-columns: 1fr; }
+            .messages { max-height: 46vh; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="top">
+            <a href="{% url 'catalog' %}">BookSwap</a>
+            <a href="{% url 'catalog' %}">← Каталог</a>
+        </div>
+
+        <div class="layout">
+            <aside class="panel">
+                <h3>Ваші переписки{% if unread_total %} ({{ unread_total }} непрочит.){% endif %}</h3>
+                {% for row in conversation_rows %}
+                    <a href="{% url 'conversation_detail' row.conversation.id %}" class="thread {% if selected and selected.id == row.conversation.id %}active{% endif %}">
+                        {% if row.avatar_url %}
+                            <img class="thread-avatar" src="{{ row.avatar_url }}" alt="avatar">
+                        {% else %}
+                            <div class="thread-avatar-fallback">{{ row.other_user.username|slice:":1"|upper }}</div>
+                        {% endif %}
+                        <div class="thread-main">
+                            <div class="thread-top">
+                                <h4>{{ row.other_user.username }}</h4>
+                                {% if row.unread_count %}
+                                    <span class="unread-dot">{{ row.unread_count }}</span>
+                                {% endif %}
+                            </div>
+                            <p>{{ row.conversation.listing.title }}</p>
+                        </div>
+                    </a>
+                {% empty %}
+                    <p>Поки немає переписок.</p>
+                {% endfor %}
+            </aside>
+
+            <section class="panel">
+                {% if selected %}
+                    <div class="chat-head">
+                        {% if selected_peer_avatar %}
+                            <img src="{{ selected_peer_avatar }}" alt="avatar">
+                        {% else %}
+                            <div class="chat-head-fallback">{{ selected_peer.username|slice:":1"|upper }}</div>
+                        {% endif %}
+                        <h3>Чат: {{ selected_peer.username }}</h3>
+                    </div>
+                    <p style="margin-top:0;color:#666;">Книга: {{ selected.listing.title }}</p>
+                    <div class="messages">
+                        {% for m in selected_messages %}
+                            <div class="msg {% if m.sender_id == request.user.id %}me{% endif %}">
+                                <div>{{ m.text }}</div>
+                                <div class="meta">{{ m.sender.username }} • {{ m.created_at|date:"d.m H:i" }}</div>
+                            </div>
+                        {% empty %}
+                            <p>Почніть переписку.</p>
+                        {% endfor %}
+                    </div>
+
+                    <form class="composer" method="post" action="{% url 'conversation_detail' selected.id %}">
+                        {% csrf_token %}
+                        <input type="text" name="text" placeholder="Напишіть повідомлення..." required>
+                        <button type="submit">Надіслати</button>
+                    </form>
+                {% else %}
+                    <h3>Оберіть переписку</h3>
+                {% endif %}
+            </section>
+        </div>
+    </div>
+</body>
+</html>

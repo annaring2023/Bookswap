@@ -34,6 +34,15 @@
             width: 300px;
             color: #555;
         }
+        .catalog-link {
+            background: #6C5DD3;
+            color: #fff;
+            padding: 10px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+        }
 
         /* Основний контейнер */
         .container {
@@ -66,6 +75,11 @@
             font-size: 40px;
             color: #fff;
         }
+        .avatar-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
         .add-photo-btn {
             background: #FFCECE;
             border: none;
@@ -95,6 +109,20 @@
             font-size: 13px;
             text-align: left;
         }
+        .genre-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        .genre-list label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #555;
+            margin: 0;
+        }
         .save-btn {
             background: #FFB1B1;
             color: white;
@@ -108,6 +136,34 @@
             transition: 0.2s;
         }
         .save-btn:hover { background: #ff9e9e; }
+        .profile-form label {
+            display: block;
+            margin: 10px 0 5px;
+            color: #666;
+            font-size: 13px;
+            text-align: left;
+        }
+        .profile-form input {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid #e2e2e2;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        .profile-form select {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid #e2e2e2;
+            font-size: 14px;
+            box-sizing: border-box;
+            background: #fff;
+        }
+        .profile-form input[readonly] {
+            background: #f3f3f3;
+            color: #888;
+        }
 
         /* Стрічка постів (Центр) */
         .post-card {
@@ -117,6 +173,52 @@
             margin-bottom: 25px;
             box-shadow: 0 5px 20px rgba(108, 93, 211, 0.05);
             position: relative;
+        }
+        .post-create-form input,
+        .post-create-form textarea,
+        .post-create-form select {
+            display: block;
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            font-family: inherit;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        .post-create-form textarea { min-height: 90px; resize: vertical; }
+        .post-create-form button {
+            border: none;
+            background: #6C5DD3;
+            color: #fff;
+            border-radius: 12px;
+            padding: 10px 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .delete-btn {
+            margin-top: 10px;
+            border: none;
+            background: #f2d7dc;
+            color: #8f2f42;
+            border-radius: 10px;
+            padding: 8px 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .edit-btn {
+            margin-top: 10px;
+            border: none;
+            background: #dde0fb;
+            color: #4f58a7;
+            border-radius: 10px;
+            padding: 8px 12px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 8px;
         }
         .post-header {
             display: flex;
@@ -146,6 +248,18 @@
             color: #333;
             margin-bottom: 5px;
         }
+        .post-meta {
+            color: #777;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+        .flash {
+            margin-bottom: 12px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            background: #efeafd;
+            color: #4a3c9a;
+        }
 
         /* Бокове меню (Справа) */
         .side-menu {
@@ -169,6 +283,25 @@
         }
         .menu-btn:hover { transform: scale(1.1); }
         .menu-btn.add { background: #6C5DD3; color: white; }
+        .menu-btn.with-badge {
+            position: relative;
+        }
+        .menu-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            min-width: 20px;
+            height: 20px;
+            border-radius: 999px;
+            background: #ef889b;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+        }
 
     </style>
 </head>
@@ -177,73 +310,143 @@
     <nav class="navbar">
         <div class="logo">BookSwap 💜</div>
         <input type="text" class="search-bar" placeholder="🔍 Пошук...">
+        <a class="catalog-link" href="{% url 'catalog' %}">Каталог</a>
     </nav>
 
     <div class="container">
 
         <aside class="user-card">
             <div class="avatar-circle">
-                👩
+                {% if profile_data.avatar %}
+                    <img src="{{ profile_data.avatar.url }}" alt="Аватар">
+                {% elif profile_data.avatar_url %}
+                    <img src="{{ profile_data.avatar_url }}" alt="Аватар">
+                {% else %}
+                    👤
+                {% endif %}
             </div>
-            <button class="add-photo-btn">+ Додати фото</button>
+            <span class="add-photo-btn">+ Додати фото</span>
 
-            <h2 class="user-name">Ваше Ім'я</h2> <div class="rating">★★★★★</div>
+            <h2 class="user-name">{% if request.user.get_full_name %}{{ request.user.get_full_name }}{% else %}{{ request.user.username }}{% endif %}</h2> <div class="rating">★★★★★</div>
 
             <div class="info-box">
-                <b>Вік:</b> 25<br>
-                <b>Стать:</b> Жіноча<br>
-                <b>Місто:</b> Київ
+                <b>Вік:</b> {{ profile_data.age|default:"-" }}<br>
+                <b>Стать:</b> {{ profile_data.get_gender_display|default:"-" }}<br>
+                <b>Місто:</b> {{ profile_data.city|default:"-" }}
             </div>
 
             <div class="genres-tag">
                 <b>Улюблені жанри:</b><br>
-                Фентезі, Романи, Психологія
+                {% if favorite_genres_display %}
+                    {{ favorite_genres_display|join:", " }}
+                {% else %}
+                    Не вказано
+                {% endif %}
             </div>
 
-            <button class="save-btn">Зберегти зміни</button>
+            <form class="profile-form" action="{% url 'update_profile' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <label>Username (не редагується)</label>
+                <input type="text" value="{{ request.user.username }}" readonly>
+                <label>Ім'я</label>
+                <input type="text" name="first_name" value="{{ request.user.first_name }}">
+                <label>Прізвище</label>
+                <input type="text" name="last_name" value="{{ request.user.last_name }}">
+                <label>Email</label>
+                <input type="email" name="email" value="{{ request.user.email }}">
+                <label>Вік</label>
+                <input type="number" name="age" min="1" max="120" value="{{ profile_data.age|default:'' }}">
+                <label>Стать</label>
+                <select name="gender">
+                    <option value="" {% if not profile_data.gender %}selected{% endif %}>Не вказано</option>
+                    <option value="female" {% if profile_data.gender == 'female' %}selected{% endif %}>Жіноча</option>
+                    <option value="male" {% if profile_data.gender == 'male' %}selected{% endif %}>Чоловіча</option>
+                    <option value="other" {% if profile_data.gender == 'other' %}selected{% endif %}>Інше</option>
+                </select>
+                <label>Місто</label>
+                <input type="text" name="city" value="{{ profile_data.city }}">
+                <label>Улюблені жанри</label>
+                <div class="genre-list">
+                    {% for value, label in genre_choices %}
+                        <label>
+                            <input type="checkbox" name="favorite_genres" value="{{ value }}" {% if value in selected_genres %}checked{% endif %}>
+                            {{ label }}
+                        </label>
+                    {% endfor %}
+                </div>
+                <label>Фото профілю (з ноутбука)</label>
+                <input type="file" name="avatar" accept="image/*">
+                <button class="save-btn" type="submit">Зберегти зміни</button>
+            </form>
         </aside>
 
         <main class="feed">
-            <div class="post-card">
-                <div class="post-header">
-                    <span>Ваш пост</span>
-                    <span>...</span>
-                </div>
-                <div class="book-content">
-                    <img src="https://via.placeholder.com/100x140/FFB6C1/ffffff?text=Книга" class="book-cover-placeholder">
-                    <div>
-                        <div class="post-title">Тисяча доріг</div>
-                        <p class="post-text">
-                            Привіт! Обміняю цю чудову книгу. Стан ідеальний, читала один раз.
-                            Дуже зворушлива історія про кохання та пошук себе.
-                        </p>
-                    </div>
-                </div>
-            </div>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="flash">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
 
             <div class="post-card">
                 <div class="post-header">
-                    <span>Ваш пост</span>
-                    <span>...</span>
+                    <span>Нове оголошення</span>
+                    <span>+</span>
                 </div>
-                <div class="book-content">
-                    <img src="https://via.placeholder.com/100x140/A0C4FF/ffffff?text=Книга" class="book-cover-placeholder">
-                    <div>
-                        <div class="post-title">Спогади про нього</div>
-                        <p class="post-text">
-                            Цікавить обмін на детективи або сучасну прозу.
-                            Книга в м'якій обкладинці.
-                        </p>
+                <form class="post-create-form" action="{% url 'create_listing' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="text" name="title" placeholder="Назва книги" required>
+                    <input type="text" name="author" placeholder="Автор">
+                    <input type="number" name="publication_year" min="1000" max="2100" placeholder="Рік видання">
+                    <input type="text" name="language" placeholder="Мова (наприклад: Українська)">
+                    <input type="number" name="pages" min="1" placeholder="Кількість сторінок">
+                    <input type="text" name="genre" placeholder="Жанр (наприклад: Фентезі)">
+                    <select name="condition">
+                        <option value="">Стан книги (необов'язково)</option>
+                        <option value="almost_new">Almost new</option>
+                        <option value="average">Average condition</option>
+                        <option value="poor">Poor condition</option>
+                    </select>
+                    <input type="text" name="hashtags" placeholder="Хештеги (необов'язково): #фентезі #обмін">
+                    <textarea name="description" placeholder="Опис оголошення" required></textarea>
+                    <input type="file" name="image" accept="image/*">
+                    <input type="url" name="image_url" placeholder="Або URL фото (необов'язково)">
+                    <button type="submit">Опублікувати</button>
+                </form>
+            </div>
+
+            {% for listing in my_listings %}
+                <div class="post-card">
+                    <div class="post-header">
+                        <span>Ваш пост</span>
+                        <span>...</span>
+                    </div>
+                    <div class="book-content">
+                        <img src="{% if listing.image %}{{ listing.image.url }}{% elif listing.image_url %}{{ listing.image_url }}{% else %}https://via.placeholder.com/100x140/FFB6C1/ffffff?text=Книга{% endif %}" class="book-cover-placeholder">
+                        <div>
+                            <div class="post-title">{{ listing.title }}</div>
+                            <p class="post-text">{{ listing.description }}</p>
+                            <p class="post-meta">{{ listing.created_at|date:"d.m.Y H:i" }}</p>
+                            <a class="edit-btn" href="{% url 'edit_listing' listing.id %}">Редагувати</a>
+                            <form action="{% url 'delete_listing' listing.id %}" method="post">
+                                {% csrf_token %}
+                                <button class="delete-btn" type="submit">Видалити оголошення</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
-            </div>
+            {% empty %}
+                <div class="post-card">
+                    <div class="post-title">Ще немає ваших оголошень</div>
+                    <p class="post-text">Додайте першу книгу через форму вище, і вона з’явиться тут та в каталозі.</p>
+                </div>
+            {% endfor %}
         </main>
 
         <div class="side-menu">
             <div class="menu-btn">👤</div>
             <div class="menu-btn add">+</div>
-            <div class="menu-btn">💬</div>
-            <div class="menu-btn">⚙️</div>
+            <a class="menu-btn with-badge" href="{% url 'messages_inbox' %}">💬{% if unread_count %}<span class="menu-badge">{{ unread_count }}</span>{% endif %}</a>
+            <a class="menu-btn" href="{% url 'settings' %}">⚙️</a>
         </div>
 
     </div>

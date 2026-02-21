@@ -1,0 +1,128 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профіль {{ owner.username }} - BookSwap</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(120deg, #d8b4d7 0%, #b893e8 100%);
+            color: #3e3448;
+        }
+        .page { padding: 22px; min-height: 100vh; }
+        .top { display: flex; justify-content: space-between; align-items: center; }
+        .top a {
+            text-decoration: none;
+            color: #fff;
+            font-size: 2.2rem;
+            font-weight: 800;
+        }
+        .back {
+            font-size: 1rem;
+            font-weight: 700;
+            background: rgba(255,255,255,.2);
+            padding: 10px 14px;
+            border-radius: 999px;
+        }
+        .grid {
+            margin-top: 18px;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 18px;
+        }
+        .card {
+            background: rgba(255,255,255,.8);
+            border-radius: 16px;
+            padding: 16px;
+        }
+        .avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: #f3f3f3;
+            display: grid;
+            place-items: center;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .listings {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(180px, 1fr));
+            gap: 14px;
+        }
+        .item {
+            background: #fff;
+            border-radius: 14px;
+            padding: 10px;
+            text-decoration: none;
+            color: inherit;
+        }
+        .item img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 10px;
+            background: #ececec;
+        }
+        .item h3 { margin: 10px 0 6px; font-size: 1rem; }
+        .item p { margin: 0; color: #666; font-size: .9rem; }
+        @media (max-width: 900px) {
+            .grid { grid-template-columns: 1fr; }
+            .listings { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="top">
+            <a href="{% url 'catalog' %}">BookSwap</a>
+            <a class="back" href="{% url 'catalog' %}">Назад у каталог</a>
+        </div>
+
+        <div class="grid">
+            <aside class="card">
+                <div class="avatar">
+                    {% if owner_profile and owner_profile.avatar %}
+                        <img src="{{ owner_profile.avatar.url }}" alt="avatar">
+                    {% else %}
+                        👤
+                    {% endif %}
+                </div>
+                <h2>{{ owner.username }}</h2>
+                <p>Місто: {% if owner_profile %}{{ owner_profile.city|default:"-" }}{% else %}-{% endif %}</p>
+                <p>Вік: {% if owner_profile %}{{ owner_profile.age|default:"-" }}{% else %}-{% endif %}</p>
+                <p>Стать: {% if owner_profile %}{{ owner_profile.get_gender_display|default:"-" }}{% else %}-{% endif %}</p>
+                <p>Жанри: {% if owner_genres_display %}{{ owner_genres_display|join:", " }}{% else %}-{% endif %}</p>
+            </aside>
+
+            <section class="card">
+                <h2>Оголошення користувача</h2>
+                <div class="listings">
+                    {% for listing in owner_listings %}
+                        <a class="item" href="{% url 'listing_detail' listing.id %}">
+                            {% if listing.image %}
+                                <img src="{{ listing.image.url }}" alt="{{ listing.title }}">
+                            {% elif listing.image_url %}
+                                <img src="{{ listing.image_url }}" alt="{{ listing.title }}">
+                            {% else %}
+                                <img src="https://via.placeholder.com/220x180/eeeeee/999999?text=Book" alt="{{ listing.title }}">
+                            {% endif %}
+                            <h3>{{ listing.title }}</h3>
+                            <p>{{ listing.description|truncatechars:70 }}</p>
+                        </a>
+                    {% empty %}
+                        <p>Поки немає оголошень.</p>
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
+    </div>
+</body>
+</html>

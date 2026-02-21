@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ listing.title }} - BookSwap</title>
+    <link rel="stylesheet" href="{% static 'css/listing_detail.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="page">
+        <header class="head">
+            <a href="{% url 'catalog' %}" class="brand">BookSwap</a>
+            <div class="actions">
+                <a href="{% url 'catalog' %}" class="back-btn">← Каталог</a>
+                <a href="{% url 'profile' %}" class="round">👤</a>
+                <a href="{% url 'settings' %}" class="round">⚙</a>
+            </div>
+        </header>
+
+        <main class="layout">
+            <section class="left">
+                <div class="card">
+                    <h1>{{ listing.title }}</h1>
+                    <p><b>Автор:</b> {{ listing.author|default:"не вказано" }}</p>
+                    <p><b>Рік видання:</b> {{ listing.publication_year|default:"не вказано" }}</p>
+                    <p><b>Мова:</b> {{ listing.language|default:"не вказано" }}</p>
+                    <p><b>Сторінки:</b> {{ listing.pages|default:"не вказано" }}</p>
+                    <p><b>Жанр:</b> {{ listing.genre|default:"не вказано" }}</p>
+                    <p><b>Стан:</b> {{ listing.get_condition_display|default:"не вказано" }}</p>
+                </div>
+
+                <div class="card owner">
+                    <p><b>Додав:</b> {{ listing.owner.username }}</p>
+                    <p>{{ owner_profile.city|default:"Місто не вказано" }}</p>
+                    <p><a href="{% url 'user_profile' listing.owner.id %}">Профіль користувача</a></p>
+                </div>
+            </section>
+
+            <section class="center">
+                <div class="cover-wrap">
+                    {% if listing.image %}
+                        <img src="{{ listing.image.url }}" alt="{{ listing.title }}">
+                    {% elif listing.image_url %}
+                        <img src="{{ listing.image_url }}" alt="{{ listing.title }}">
+                    {% else %}
+                        <div class="fallback">{{ listing.title }}</div>
+                    {% endif %}
+                </div>
+                <div class="stars">★ ★ ★ ★ ★</div>
+                <form action="{% url 'request_exchange' listing.id %}" method="post">
+                    {% csrf_token %}
+                    <button class="btn btn-main" type="submit">Request exchange</button>
+                </form>
+                <a class="btn link-btn" href="{% url 'start_conversation' listing.id %}">Chat with owner</a>
+            </section>
+
+            <section class="right">
+                <div class="card review">
+                    <p><b>Review:</b> {{ listing.description }}</p>
+                </div>
+                <div class="card tags">
+                    {% if listing.hashtags %}
+                        {{ listing.hashtags }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

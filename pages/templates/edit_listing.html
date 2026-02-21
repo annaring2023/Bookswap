@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редагувати оголошення</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(120deg, #d8b4d7 0%, #b893e8 100%);
+        }
+        .card {
+            width: min(92vw, 760px);
+            background: #fff;
+            border-radius: 18px;
+            padding: 18px;
+        }
+        h1 { margin: 0 0 12px; color: #5e4f88; }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .grid .full { grid-column: 1 / -1; }
+        input, select, textarea {
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        textarea { min-height: 100px; resize: vertical; }
+        .actions {
+            margin-top: 12px;
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            border: none;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            flex: 1;
+        }
+        .btn-save { background: #6C5DD3; color: #fff; }
+        .btn-back { background: #f0f0f0; color: #444; }
+    </style>
+</head>
+<body>
+    <form class="card" action="{% url 'edit_listing' listing.id %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <h1>Редагувати оголошення</h1>
+        <div class="grid">
+            <input type="text" name="title" value="{{ listing.title }}" placeholder="Назва книги" required>
+            <input type="text" name="author" value="{{ listing.author }}" placeholder="Автор">
+            <input type="number" name="publication_year" min="1000" max="2100" value="{{ listing.publication_year|default:'' }}" placeholder="Рік видання">
+            <input type="text" name="language" value="{{ listing.language }}" placeholder="Мова">
+            <input type="number" name="pages" min="1" value="{{ listing.pages|default:'' }}" placeholder="Кількість сторінок">
+            <input type="text" name="genre" value="{{ listing.genre }}" placeholder="Жанр">
+            <select name="condition">
+                <option value="" {% if not listing.condition %}selected{% endif %}>Стан книги</option>
+                <option value="almost_new" {% if listing.condition == 'almost_new' %}selected{% endif %}>Almost new</option>
+                <option value="average" {% if listing.condition == 'average' %}selected{% endif %}>Average condition</option>
+                <option value="poor" {% if listing.condition == 'poor' %}selected{% endif %}>Poor condition</option>
+            </select>
+            <input type="text" name="hashtags" value="{{ listing.hashtags }}" placeholder="Хештеги">
+            <input class="full" type="file" name="image" accept="image/*">
+            <input class="full" type="url" name="image_url" value="{{ listing.image_url }}" placeholder="URL фото (необов'язково)">
+            <textarea class="full" name="description" placeholder="Опис" required>{{ listing.description }}</textarea>
+        </div>
+        <div class="actions">
+            <a class="btn btn-back" href="{% url 'profile' %}">Назад</a>
+            <button class="btn btn-save" type="submit">Зберегти</button>
+        </div>
+    </form>
+</body>
+</html>

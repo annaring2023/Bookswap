@@ -1,0 +1,150 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookSwap</title>
+    <link rel="stylesheet" href="{% static 'css/catalog.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="page-bg">
+        <header class="top-bar">
+            <h1 class="brand">BookSwap</h1>
+            <nav class="top-actions" aria-label="Швидкі дії">
+                <a href="{% url 'settings' %}" class="icon-link" aria-label="Налаштування">⚙</a>
+                <a href="{% url 'messages_inbox' %}" class="icon-link icon-with-badge" aria-label="Повідомлення">✉{% if unread_count %}<span class="badge">{{ unread_count }}</span>{% endif %}</a>
+                <a href="{% url 'profile' %}" class="icon-link icon-solid" aria-label="Додати">+</a>
+                <a href="{% url 'profile' %}" class="icon-link icon-solid icon-avatar" aria-label="Профіль">👤</a>
+            </nav>
+        </header>
+
+        <section class="search-wrap">
+            <form class="catalog-search-form" action="{% url 'catalog' %}" method="get">
+                <div class="search-box">
+                    <button class="filter-toggle {% if search_in_description %}active{% endif %}" id="filterToggle" type="button" aria-label="Фільтр по описах">☰</button>
+                    <input type="hidden" name="desc" id="descFilterInput" value="{% if search_in_description %}1{% else %}0{% endif %}">
+                    <input type="search" name="q" value="{{ query }}" placeholder="Знайдіть свою книгу" aria-label="Пошук книг">
+                    <button class="search-submit" type="submit" aria-label="Пошук">⌕</button>
+                </div>
+
+                <section class="filter-panel" id="filterPanel">
+                    <div class="panel-head">
+                        <h3>Знайдіть свій збіг</h3>
+                        <button class="close-filter" id="closeFilter" type="button">×</button>
+                    </div>
+
+                    <div class="filter-block">
+                        <p>Оберіть жанр</p>
+                        <div class="chip-row">
+                            <label class="chip"><input type="radio" name="genre_filter" value="" {% if not genre_filter %}checked{% endif %}>Усі</label>
+                            <label class="chip"><input type="radio" name="genre_filter" value="фентезі" {% if genre_filter == 'фентезі' %}checked{% endif %}>Фентезі</label>
+                            <label class="chip"><input type="radio" name="genre_filter" value="роман" {% if genre_filter == 'роман' %}checked{% endif %}>Романтика</label>
+                            <label class="chip"><input type="radio" name="genre_filter" value="науков" {% if genre_filter == 'науков' %}checked{% endif %}>Наукова</label>
+                            <label class="chip"><input type="radio" name="genre_filter" value="детектив" {% if genre_filter == 'детектив' %}checked{% endif %}>Детектив</label>
+                            <label class="chip"><input type="radio" name="genre_filter" value="психолог" {% if genre_filter == 'психолог' %}checked{% endif %}>Психологія</label>
+                            <label class="chip"><input type="radio" name="genre_filter" value="інше" {% if genre_filter == 'інше' %}checked{% endif %}>Інше</label>
+                        </div>
+                    </div>
+
+                    <div class="filter-block">
+                        <p>Оберіть стан книги</p>
+                        <div class="chip-row">
+                            <label class="chip"><input type="radio" name="condition_filter" value="" {% if not condition_filter %}checked{% endif %}>Усі</label>
+                            <label class="chip"><input type="radio" name="condition_filter" value="almost_new" {% if condition_filter == 'almost_new' %}checked{% endif %}>Майже нова</label>
+                            <label class="chip"><input type="radio" name="condition_filter" value="average" {% if condition_filter == 'average' %}checked{% endif %}>Середній стан</label>
+                            <label class="chip"><input type="radio" name="condition_filter" value="poor" {% if condition_filter == 'poor' %}checked{% endif %}>Поганий стан</label>
+                        </div>
+                    </div>
+
+                    <div class="filter-block">
+                        <p>Оберіть автора</p>
+                        <input class="author-input" type="text" name="author_filter" value="{{ author_filter }}" placeholder="Введіть автора">
+                    </div>
+
+                    <div class="filter-block">
+                        <p>Оберіть мову книги</p>
+                        <div class="chip-row">
+                            <label class="chip"><input type="radio" name="language_filter" value="" {% if not language_filter %}checked{% endif %}>Усі</label>
+                            <label class="chip"><input type="radio" name="language_filter" value="англ" {% if language_filter == 'англ' %}checked{% endif %}>Англійська</label>
+                            <label class="chip"><input type="radio" name="language_filter" value="україн" {% if language_filter == 'україн' %}checked{% endif %}>Українська</label>
+                            <label class="chip"><input type="radio" name="language_filter" value="поль" {% if language_filter == 'поль' %}checked{% endif %}>Польська</label>
+                            <label class="chip"><input type="radio" name="language_filter" value="нім" {% if language_filter == 'нім' %}checked{% endif %}>Німецька</label>
+                            <label class="chip"><input type="radio" name="language_filter" value="франц" {% if language_filter == 'франц' %}checked{% endif %}>Французька</label>
+                        </div>
+                    </div>
+
+                    <button class="results-btn" type="submit">Показати результати</button>
+                </section>
+            </form>
+        </section>
+
+        <main class="catalog-layout">
+            <section class="feed-grid">
+                {% for listing in listings %}
+                    {% if listing.owner_id != request.user.id %}
+                        <a class="card-link" href="{% url 'listing_detail' listing.id %}">
+                            <article class="book-card">
+                                <div class="post-head">
+                                    <span class="post-user">@{{ listing.owner.username }}</span>
+                                    <span class="post-dot">•••</span>
+                                </div>
+                                <div class="book-cover {% cycle 'cover-1' 'cover-2' 'cover-3' 'cover-4' 'cover-5' 'cover-6' 'cover-7' 'cover-8' %}"
+                                     {% if listing.image %}style="background-image: linear-gradient(0deg, rgba(0,0,0,.20), rgba(0,0,0,.20)), url('{{ listing.image.url }}');"{% elif listing.image_url %}style="background-image: linear-gradient(0deg, rgba(0,0,0,.20), rgba(0,0,0,.20)), url('{{ listing.image_url }}');"{% endif %}>
+                                    <span class="title-chip">{{ listing.title }}</span>
+                                </div>
+                                <p class="card-description">{{ listing.description|truncatechars:130 }}</p>
+                                <div class="post-meta">
+                                    <span>{{ listing.created_at|date:"d.m.Y" }}</span>
+                                </div>
+                            </article>
+                        </a>
+                    {% else %}
+                        <article class="book-card">
+                            <div class="post-head">
+                                <span class="post-user">@{{ listing.owner.username }}</span>
+                                <span class="post-dot">Ваше</span>
+                            </div>
+                            <div class="book-cover {% cycle 'cover-1' 'cover-2' 'cover-3' 'cover-4' 'cover-5' 'cover-6' 'cover-7' 'cover-8' %}"
+                                 {% if listing.image %}style="background-image: linear-gradient(0deg, rgba(0,0,0,.20), rgba(0,0,0,.20)), url('{{ listing.image.url }}');"{% elif listing.image_url %}style="background-image: linear-gradient(0deg, rgba(0,0,0,.20), rgba(0,0,0,.20)), url('{{ listing.image_url }}');"{% endif %}>
+                                <span class="title-chip">{{ listing.title }}</span>
+                            </div>
+                            <p class="card-description">{{ listing.description|truncatechars:130 }}</p>
+                            <div class="post-meta">
+                                <span>{{ listing.created_at|date:"d.m.Y" }}</span>
+                            </div>
+                        </article>
+                    {% endif %}
+                {% empty %}
+                    <article class="book-card book-card-empty">
+                        <p>Поки немає оголошень у каталозі.</p>
+                        <p>Додай перше оголошення у профілі.</p>
+                    </article>
+                {% endfor %}
+            </section>
+        </main>
+    </div>
+    <script>
+        const filterToggle = document.getElementById('filterToggle');
+        const descFilterInput = document.getElementById('descFilterInput');
+        const filterPanel = document.getElementById('filterPanel');
+        const closeFilter = document.getElementById('closeFilter');
+        if (filterToggle && descFilterInput) {
+            filterToggle.addEventListener('click', function () {
+                const on = descFilterInput.value === '1';
+                descFilterInput.value = on ? '0' : '1';
+                filterToggle.classList.toggle('active', !on);
+                if (filterPanel) {
+                    filterPanel.classList.toggle('open');
+                }
+            });
+        }
+        if (closeFilter && filterPanel) {
+            closeFilter.addEventListener('click', function () {
+                filterPanel.classList.remove('open');
+            });
+        }
+    </script>
+</body>
+</html>

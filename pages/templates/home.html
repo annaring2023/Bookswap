@@ -17,7 +17,7 @@
     <header class="site-header">
         <div class="logo-main">💜 BookSwap</div>
         <nav>
-            <a href="#">Каталог</a>
+            <a href="{% url 'catalog' %}">Каталог</a>
             <a href="#">Про нас</a>
             <button class="auth-trigger" id="openAuth">Увійти</button>
         </nav>
@@ -89,19 +89,6 @@
                 </div>
             </div>
 
-                <div class="form-card" id="loginCard" style="display: none;">
-                    <div class="toggle-buttons">
-                        <button class="btn-toggle active">Увійти</button>
-                        <button class="btn-toggle" onclick="showSignup()">Створити акаунт</button>
-                    </div>
-                    <h2>З поверненням!</h2>
-                    <form action="{% url 'profile' %}"> <input type="text" placeholder="Ім'я користувача" required>
-                        <input type="password" placeholder="Пароль" required>
-                        <button type="submit" class="submit-btn">Почати обмін</button>
-                    </form>
-                    <p class="footer-text">Не маєте акаунту? <a href="#" onclick="showSignup()">Зареєструватись</a></p>
-                </div>
-            </div>
         </div>
     </div>
 
